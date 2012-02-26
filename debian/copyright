@@ -1,0 +1,41 @@
+Format: http://dep.debian.net/deps/dep5
+Upstream-Name: logsurfer
+Source: http://www.crypt.gen.nz/logsurfer/
+
+Files: *
+Copyright: 1995-1996 Wolfgang Ley
+           1995-1996 Uwe Ellermann
+           2004-2011 Kerry Thompson
+License: BSD-style
+ /************************************************************************
+ * This material was originally written and compiled by Wolfgang Ley and
+ * Uwe Ellermann at the DFN-CERT, Germany, in 1995-96
+ *
+ * Redistribution and use in source and binary forms are permitted
+ * provided that this entire copyright notice is duplicated in all such
+ * copies.
+ *
+ * This software is provided "as is" and without any expressed or implied
+ * warranties, including, without limitation, the implied warranties of
+ * merchantability and fitness for any particular purpose.
+ ************************************************************************/
+
+Files: debian/*
+Copyright: 2012 Thilo Uttendorfer <debian@uttendorfer.net>
+License: GPL-2+
+ This package is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ This package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License version 2 can be found in "/usr/share/common-licenses/GPL-2".
+

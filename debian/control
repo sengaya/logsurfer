@@ -1,0 +1,14 @@
+Source: logsurfer
+Section: admin
+Priority: extra
+Maintainer: Thilo Uttendorfer <debian@uttendorfer.net>
+Build-Depends: debhelper (>= 8.0.0), autotools-dev
+Standards-Version: 3.9.3
+Homepage: http://www.crypt.gen.nz/logsurfer/
+
+Package: logsurfer
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Monitoring system logs in real-time
+ Logsurfer is a program for monitoring system logs in real-time, and reporting
+ on the occurrence of events.
