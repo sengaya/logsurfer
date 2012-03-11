@@ -1,0 +1,17 @@
+The logsurfer package uses the GNU regex-0.12 library for pattern matching
+with regular expressions. The files "regex.c" and "regex.h" in the source
+dir of the logsurfer are derived from this package (with only one minor
+change in regex.c: instead of #include "config.h" we are now using
+#include <config.h> to support system wide config.h files).
+
+The complete regex package includes additional a (very good!) documentation
+in texinfo format. The logsurfer is coming with a postscript version of that
+documentation (because a lot of people haven't installed tex or makeinfo).
+
+The original regex package also includes some more text files (AUTORS,
+Copying, ChangeLog, ...) and a test suite.
+
+The complete regex-library distribution is available via anymous ftp from
+  ftp://prep.ai.mit.edu/pub/gnu/regex-0.12.tar.gz
+or from any other GNU mirror.
+

@@ -1,0 +1,30 @@
+start-mail
+==========
+
+If you want to forward information from the logsurfer via email, then
+you have to invoke an external program to deliver the mail. Usually
+the input of the logfile is under control of the (possible) remote
+user so you have to be very careful. Especially do *not* use any mailer,
+that provides escape sequences (like ~ in most "mail" commands).
+
+"sendmail" has no such escape chars and may be used for delivering.
+Unfortunately you have no option to set the subject in sendmail :(
+This small wrapper allows you to specify a subject with sendmail
+(which will be inserted in the body as a "Subject:" line).
+
+The script is pretty simple and invokes sendmail in "queue-only" mode
+to avoid system overlaod due to several running sendmails.
+
+*Important*
+
+Before using the script you should change the definition of the sender
+in the script (see the line "sender=...."). This name will be used in
+the "From:" line of your postings.
+
+
+usage: start-mail mail-addr subject
+
+example:
+
+start-mail root "Logsurfer Output"
+

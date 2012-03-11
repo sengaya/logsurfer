@@ -1,0 +1,392 @@
+.\"
+.\" written by W. Ley, U. Ellermann, and K. Thompson
+.\"
+.\" @(#) $Header: logsurfer.1,v 
+.TH LOGSURFER 4  "Thu Oct 19 1995"
+.SH NAME
+logsurfer.conf \- configuration file for logsurfer
+.SH SYNOPSIS
+.B @CONFFILE@
+.SH DESCRIPTION
+.LP
+The \fIlogsurfer.conf\fP file is used to configure the \fIlogsurfer\fP
+program. It contains initial rule definitions. Be careful if you need to
+debug your configuration file: the logsurfer is able to create or delete
+rules at runtime --- see NOTES.
+.LP
+The configuration file uses regular expressions to specify match patterns
+for message lines. Unfortunately there are a lot of different regular
+expression definitions available. The logsurfer program uses the definition
+of regex within \fIegrep(1)\fP as defined by the POSIX standard. For a complete
+description of the available operators you should read the excellent
+documentation of the GNU regex-library (which is part of the logsurfer
+distribution).
+.LP
+Lines in the configuration file that have a # in the first column are
+handled as comments and are not processed. If the character in the first
+column is a whitespace (space or tab) the line is processed as a continuation
+of the previous line. All other starting characters are interpreted as a
+beginning of a new rule.
+.LP
+There are three different methods of quoting for all strings: If no quotes
+are used the string is terminated at the first whitespace character (space
+or tab). If you use single quotes (') the string is terminated at the first
+single quote following the initial one and the contents are used "as is".
+If you use double quotes (") for a string, the string is terminated by
+the corresponding quote. In this case the backslash character is the "escape"
+character (that is: you can use \\" to specify a double quote which is not
+the end of the string). Be careful to escape all backslashes by an extra
+backslash. To avoid confusion it is advised to always quote your strings.
+If you use double quoted strings in the action part (see below), than you
+can use special variables \fI$0\fP to \fI$9\fP to specify submatches within
+the matching regular expression. \fI$0\fP refers to the entire message line,
+\fI$1\fP to the string that has matched the given regular expression (the
+match_regex as described later on) and the other variables may reference to
+submatches within the regular expression (these are regular expressions
+within the complete regular expression, that are enclosed in brackets ---
+for more information read the documentation on regular expressions).
+.LP
+The basic format of a rule definition is:
+.LP
+match_regex not_match_regex stop_regex not_stop_regex timeout [continue] action
+.LP
+.TP 20
+match_regex
+If this (required) regular expression matches the logline to be processed
+then the rest of this rule is being parsed. Otherwise the logline does
+not match this rule and the logsurfer tries to find another match in one
+of the following rule definitions.
+.TP
+not_match_regex
+If this regex is not a "-" then it is considered to be a regular expression
+that must not match against the logline. With the help of this second regex
+you are able to specify rule like "Match this expression except this other
+one".
+.TP
+stop_regex
+If the stop_regex is not "-" and the logline matches against this regex then
+the rule is being deleted from the list of active rules (see also the
+following not_stop_regex definition). This is especially useful for dynamically
+created rules that should only be active until another message is found.
+.TP
+not_stop_regex
+If this regex is not "-" then it defines the pattern that must not match against
+the logline. It is only processed if you have given a stop_regex. The
+combination of stop_regex and not_stop_regex specifies a "if the first regex
+matches and the second one does not: then delete this rule".
+.TP
+timeout
+Another method to generate rules that are only active for a certain amount
+of time is to specify the lifetime in seconds. If the timeout value is 0 then
+the rule will not timeout. Otherwise the integer value specifies the number
+of seconds this rule should be active.
+.TP
+continue
+If this optional keyword is given, than matching of the logline against
+rules is not stopped if the current rule matches. The logsurfer program
+will continue to find another matching rule after processing the current rule.
+.TP
+action
+The action of a rule is defined by one keyword and optional arguments. The
+complete syntax of possible actions for rules are described in the next
+paragraph.
+.LP
+Within rules you are able to specify one of the following action types:
+.TP 12
+ignore
+No further actions are initiated. This can be used to filter some lines
+with known expressions that you want to ignore.
+.TP
+exec
+The first argument is the program that should be invoked. You can specify
+other arguments which are being passed as arguments to the program. As
+said in the quoting section you are also allowed to use variables describing
+submatches of the match_regex if you are using double quotes (").
+.TP
+pipe
+This is similar to the exec definition except that the invoked program gets
+the actual logline from stdin.
+.TP
+open
+With the open command you are able to open a new context. See the following
+section about contexts for a description of the format. If a context with the
+given match_regex (part of the following context definition) already exists,
+then no new context is being opened and the open command does nothing.
+.TP
+delete
+Contexts are currently identified by their exact match_regex string. If
+you specify an existing match_regex as an argument to the delete definition,
+then the specified context is being closed and deleted without activating
+the default_action for the context.
+.TP
+report
+The first argument specifies the external program (incl. options) that should
+be invoked. All further arguments specify context definitions which are
+summarized and feeded as standard input to the invoked program.
+.TP
+rule
+This option allows you to create new rules. The first word following the
+keyword "rule" must be one of the following: "before" (the new rule is
+inserted before the current rule), "behind" (the new rule is inserted behind
+the current rule), "top" (insert at the top of all rules) or "bottom"
+(append at the end of all existing rules). Any following keywords
+should again be in the format of the rule definition.
+.TP
+echo
+The echo action simply echos the next argument string to stdout. This
+is useful if you want to output a simple string without invoking a
+separate process to do so. If the first argument is ">file", or
+">>file" then the second argument is written to the specified file,
+either overwriting or appending the file respectively.
+.TP
+syslog
+This allows you to send messages into syslog. The first keyword
+following the syslog action is the syslog facility and level in the
+format (facility):(level) where facility must be one of auth,
+authpriv, cron, daemon, ftp, kern, local0, local1, local2, local3,
+local4, local5, local6, local7, lpr, mail, news, syslog, user, uucp
+and level must be one of emerg, alert, crit, err, warn, notice, info,
+debug. The second argument to the syslog action is a string to send
+to syslog, which should be surrounded by quotes.
+.LP
+Once a logline has matched a rule this rule perform certain actions.
+Rules form the "active" part of the logsurfer.
+Contexts are a kind of "big box" where messages that match certain regular
+expressions are stored. They are "passive" and can be used by other actions
+like reports to retrieve the stored information. The idea is to store all
+messages (for a certain period of time) in contexts (even if they seem to be
+unimportant). If you detect some unusual activity later on you might be
+interested in those messages, that are normally not important.
+Instead of re-reading the loginformation (which maybe
+not possible --- e.g. if you are reading from standard input) you use
+the created contexts for the retrieval of the message categories. Example:
+you might want to put all actions from one ftp-session into one context. If
+nothing "unusual" happens then you are not interested in the complete session
+and delete it after the user has logged out. But if the user tries to alter
+or upload files then you are interested in getting the whole session to
+see what this user has done before he triggered the alert.
+.LP
+Be careful: the order of rules is important because the logsurfer stops
+finding matches after the first matching rule that has no "continue" keyword.
+Also the performance of the logsurfer maybe better if you put the rules
+with the most matches (the rule that is being used for most messages --- e.g.
+an ignore rule for certain actions) at the top.
+.LP
+\fIContexts\fP have the following format:
+.LP
+match_regex match_not_regex line_limit timeout_abs timeout_rel [min_lines] default_action
+.LP
+.TP 20
+match_regex
+Similar to the match_regex of rules the first regular expressions must match
+against the logline to be stored in this context.
+.TP
+match_not_regex
+If this regular expression is not "-" then the logline must not match
+against this regex to be stored in this context.
+.TP
+line_limit
+The maximum number of lines that you want to store in this context. It is
+highly recommended to set a limit on all your contexts to avoid memory
+problems as a result of an error in the configuration or due to a large
+amount of logmessages which you haven't seen before. You may want to set the
+limit to a very high value like 5000 or 10000 so that it usually won't be
+reached but it is still a protection if something goes really wrong.
+.TP
+timeout_abs
+If you create a context you are able to set a time limit (in seconds)
+specifying how long this context should be active. If this timeout value is reached
+then the associated default_action is launched. Example: you might want
+to collect everything that is coming from a particular host or domain but
+forget the collected data after 24 hours (so if you create a report as a
+result of another important logline and you report all actions coming from
+this host then you are not interested in old messages from the previous day).
+.TP
+timeout_rel
+In addition to the absolute timeout you are also able to specify a relative
+timeout specifying the number of seconds since the last message was added to
+this context. This is a kind of inactive timer you can use to launch the
+default action if there are no new messages stored in this context for a
+certain amount of time.
+.TP
+min_lines
+An optional parameter specifying the minimum number of lines matched by a
+context before the action will be performed. The action will be performed
+if and only if it has collected min_lines or more log lines, otherwise the
+context will simply be deleted without any action. Note that min_lines does
+not in itself trigger the action - only a timeout or max_lines will do so.
+Default is 0 (no check for min_lines)
+.TP
+default_action
+This is the action that is processed if the linenumber limit or one of the
+timeouts are reached. The possible actions are the same as described in the
+rules definition except the "active" part to modify other rules or contexts:
+you cannot use "open", "delete" or "rule" actions.
+.LP
+All externals programs (for example in the "exec", "pipe" and "report"
+actions) must be given with a full pathname. They are started in the
+background and the logsurfer continues to process message lines while the
+other programs are running. The idea was not to stop message processing
+if an external program hangs or takes a long time to finish.
+.LP
+If you need to specify a context (for example in the "open", "delete"
+and "report" actions) you have to do this by giving the exact regular
+expression that this context uses for matching (match_regex), alternatively
+if you specify "-" as the context, then logsurfer will apply the contents of
+the context under which the action is being performed.
+.LP
+The timeout functions require timestamps for each message that is processed.
+To be independent of the message format the logsurfer uses the time when
+he first sees the message as an internal timestamp. Timeout values are
+always working on those timestamps. This might give some unexpected results
+if you don't follow the end of a logfile but instead use the logsurfer to
+process one logfile once. In this case all timestamps are from the current
+time instead of the time the message was created.
+.LP
+.SH EXAMPLES
+The \fIlogsurfer\fP program was designed to work with any kind of ascii
+loginformation. Most people may want to use the program to monitor the
+syslog-messages (for example stored in /var/adm/messages). There are
+several things you should consider if you use this program to monitor
+such files. One important thing is to realize that the contents of the
+logmessages are usually under the control of (possible remote) user. This
+is especially important if you invoke external programs and use parts of
+the message as arguments or as standard input (exec or pipe actions).
+Remember that those messages may contain any arbitrary data and that the
+invoked program may not be able to handle this or may allow certain
+actions that are under control of the person who created the message.
+This may open a big security hole! For example: do not use /bin/mail
+or mailx to mail the message or a report to an email-address. Those
+programs have special escape-features "~" that can be used to invoke
+other programs or to modify files!
+.LP
+Another known pitfall is to open a context for a hostname. Remember,
+that a message is stored in this context if the hostname appears anywhere
+in the line. Especially if you forward syslog() messages to another host
+then the messages file may contain the name of the host who forwarded the
+message to the central loghost. To avoid matching in the hostname part
+you might want to ignore the first 20 chars using "^.{20,}hostname" or
+describe the format of the logmessage file in detail. Example: ignore the
+first 16 chars (the timestamp) and the first following word (the hostname)
+"^.{16}[^ ]*hostname".
+.LP
+Another problem is the use of submatches in new definitions of regular
+expressions. For example: the hostname may contain dots "." which is
+interpreted (while matching lines against match_regex definitions) as
+"any character". You will usually not miss entries but also match a
+little bit more than expected. Let's say you have a hostname like
+"what.is.this.de" and create a context using this as match_regex. This
+regex will also match strings like "what-is.this.de" or "what7is+this_de".
+This maybe called a bug in the program, but correct escaping of regular
+expressions is not trivial and is currently not implemented in the
+logsurfer.
+.LP
+Now to some real example configuration lines:
+.LP
+.RS
+.ft 4
+.nf
+\'.*\' \- \- \- 0 exec "/bin/echo $0"
+.ft 1
+.fi
+.RE
+.LP
+This is a very simple testrule that matches everything ('.*') without
+exceptions (the first "-"). It has no "self-destroy matching rules (the
+next to "-") and no timeout (the "0"). For each message line it invokes
+the external command "/bin/echo" with the complete message line as an
+argument. The result will be, that every input line is echoed to the
+standard output. If you put the example line in a file called "testconf"
+then you might want to use "logsurfer -c testconf" to start the logsurfer
+program with this configuration file. Every line you type in should be
+echoed.
+.LP
+.RS
+.ft 4
+.nf
+\'ftpd\\[([0-9]*)\\]: connection from\' \- \- \- 0
+	open "ftpd\\\\[$2\\\\]:" \- 4000 10800 1800 ignore
+.ft 1
+.fi
+.RE
+.LP
+This line will open a new context for each new ftp connection. The context
+will include every logline that contains "ftpd[<pid>]:" (with pid the process
+id of the ftp-session) in it. One session has a maximum of 4000 lines and is
+a maximum of 3 hours long. It is expected that there will be at least every
+30 minutes a new ftp-command - otherwise the default action will be executed.
+Of course you won't use ignore in real life (this was just to shorten the
+example here).
+.LP
+.RS
+.ft 4
+.nf
+\'ftpd\\[([0-9]*)\\]: FTP session closed\' \- \- \- 0
+    delete "ftpd\\\\[$2\\\\]:"
+.ft 1
+.fi
+.RE
+.LP
+We delete (forget) the collected context if the ftp session ends.
+.LP
+.RS
+.ft 4
+.nf
+\'ftpd\\[([0-9]*)\\]: failed login from ([^ ]*) \\[([0-9.]*)\' \- \- \- 0
+	report "/usr/lib/sendmail \-odq root" "ftpd\\\\[$2\\\\]:"
+						"^.{19,}$3" "^.{19,}$4"
+.ft 1
+.fi
+.RE
+.LP
+If you get a failed login via FTP you will sent all information about the
+current ftp-session, about the hostname and about the ip-address via sendmail
+to the sysadmin (root). This example assumes, that you also have opened
+contexts for the hostname "^.{19,}$3" and the ip-addr. The string "^.{19,}"
+was used to not match the hostname in the first 19 chars (in the syslog
+information this is the host that has generated the syslog message).
+.LP
+.RS
+.ft 4
+.nf
+\'ftpd\\[([0-9]*)\\]: cmd failure - not logged in\' \- \- \- 0
+	rule before
+	"ftpd\\\\[($2)\\\\]: FTP session closed" \- \'.*\' \- 1800 report
+ 	"/usr/lib/sendmail \-odq root" "ftpd\\\\[$2\\\\]:"
+.ft 1
+.fi
+.RE
+.LP
+If someone has tried to issue an ftp command without being logged in then you
+add another rule, that waits for the end of the ftp-session, sends the summary
+of the ftp-session via sendmail to root and deletes itself (we do not need this
+rule any longer, because the ftp-session has been closed). Remember to put
+this rule before the general rule that handles the "FTP session closed"
+message or this rule won't be reached.
+.LP
+This configuration examples might look a little bit confusing but if you
+play a with the configuration facilities you will learn how to use them.
+.LP
+.SH FILES
+.PD 0
+.TP 32
+.B @CONFFILE@
+default configuration file
+.TP
+.B @DUMPFILE@
+dump of the rules and contexts
+.PD
+.SH "SEE ALSO"
+.BR logsurfer(1),
+.BR swatch(8)
+.SH NOTES
+If you need to debug or control the work of the logsurfer it is important
+to be able to get an image of the currently active rules and contexts. This
+can be done be sending special signals to the logsurfer program to initiate
+dumping of the state. This is discussed in the NOTES section of the
+\fIlogsurfer\fP manpage.
+.LP
+If you work on messages that were written by the syslog daemon you may loose
+some information if the daemon summarizes repeated messages. Instead of the
+original message you might get a message like "last message repeated X times".
+

@@ -1,0 +1,22 @@
+prtime
+======
+
+This is a small utility to print the timestamp from the logsurfer dumpfile
+in a more human readable form. It will either convert the given timestamp
+to the date and time representation of your local machine or it will print
+the offset in seconds until the timestamp will be reached.
+
+Compile it with: "cc -o prtime prtime.c"
+
+
+usage: prtime [-o] timestamp
+
+Examples:
+
+% prtime 821179449
+Tue Jan  9 10:24:09 1996
+
+% prtime -o 821179454
+5 seconds offset
+
+

@@ -1,0 +1,47 @@
+######################################################################
+#
+# This Makefile should not be called directly! 
+# Use the Makefile in the topdir to build the package
+#
+######################################################################
+
+srcdir=@srcdir@
+top_srcdir=@top_srcdir@
+VPATH=@srcdir@:@top_srcdir@
+
+#
+# protect agains broken make programs
+#
+SHELL = /bin/sh
+.SUFFIXES:
+.SUFFIXES: .c .o
+
+.c.o:
+	$(CC) -c $(CPPFLAGS) $(DEFS) -DDUMPFILE=\"$(DEF_DUMPFILE)\" \
+	-DCONFFILE=\"$(DEF_CONFFILE)\" -I$(top_srcdir) $(CFLAGS) $<
+
+
+SRCS	= context.c exec.c exit.c logsurfer.c readcf.c report.c rule.c str_util.c \
+	regex.c readline.c
+OBJS	= context.o exec.o exit.o logsurfer.o readcf.o report.o rule.o str_util.o \
+	regex.o readline.o
+
+#
+# tag definitions start here
+#
+
+all: logsurfer
+
+install:
+	$(INSTALL_PROGRAM) logsurfer $(bindir)/logsurfer
+
+logsurfer: $(OBJS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+
+clean:
+	$(RM) $(OBJS) logsurfer core
+
+distclean:
+	$(RM) Makefile
+	$(RM) $(OBJS) logsurfer core
+

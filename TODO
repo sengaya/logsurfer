@@ -1,0 +1,8 @@
+Planned for another release (if I have the time --- very unlikely):
+===================================================================
+	+ variables in configuration file?
+	+ M4 macro package for example configurations
+	+ escaping of special chars in regular expressions that are
+	  used via the variables $0 .. $9
+
+

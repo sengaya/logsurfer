@@ -1,0 +1,13 @@
+This is a collection of some useful tools, that can be used together
+with the logsurfer program. As always:
+
+This software is provided "as is" and without any expressed or implied
+warranties, including, without limitation, the implied warranties of
+merchantability and fitness for any particular purpose.
+
+Please note, that the programs in this dir are included just as examples.
+They are usually not prepared for easy use (configure program, Makefile etc.).
+
+Please read the README files within each dir.
+
+

@@ -1,0 +1,50 @@
+#!/bin/sh
+
+# We have to invoke a mailer that has no escape possibilities...
+#
+# The only one I know of would be sendmail, but this is very ugly
+# to invoke directly because we have no control of To: and
+# Subject: lines...
+#
+# This wrapper writes some of the Header-Fields before forwarding the
+# mail itself in the body
+#
+# usage: start-mail mailaddr subject
+
+# you might want to change the following line to set a sepcific from: address
+# example:  sender='logsurfer@cert.dfn.de (Logsurfer Account)'
+sender=`/usr/bin/id|/usr/bin/sed 's/.*(\(.*\)) .*/\1/'`
+
+# it's a bad idea to use temporary files with predictable names that are
+# located in a world-writable /tmp dir because other local users may create
+# sym-links pointing to another file...
+#
+# better use a tmp-dir that is only accessible by the logsurfer user
+# change the following line!
+# example: TMP=/home/logsurfer
+TMP=/tmp
+
+
+if [ $# -eq 0 ]; then
+	echo 'usage: start-mail mailaddr subject' 1>&2
+	exit 1
+fi
+
+/bin/rm -f $TMP/start-mail.$$
+
+echo "From: $sender" > $TMP/start-mail.$$
+echo "To: $1" | /usr/bin/tr -cd '[\040-\176]' >> $TMP/start-mail.$$
+echo "" >> $TMP/start-mail.$$
+if [ $# -gt 1 ]; then
+	shift
+	echo "Subject: $*" | /usr/bin/tr -cd '[\040-\176]' >> $TMP/start-mail.$$
+	echo "" >> $TMP/start-mail.$$
+else
+	echo "Subject: (no subject given - logsurfer output)" >> $TMP/start-mail.$$
+fi
+echo "" >> $TMP/start-mail.$$
+
+cat $TMP/start-mail.$$ - | /usr/lib/sendmail -odq -t
+
+/bin/rm -f $TMP/start-mail.$$
+

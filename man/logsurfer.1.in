@@ -1,0 +1,236 @@
+.\"
+.\" written by W. Ley, U. Ellermann, and K. Thompson
+.\"
+.\" @(#) $Header: logsurfer.1,v 
+.TH LOGSURFER 1  "Thu Oct 19 1995"
+.SH NAME
+logsurfer \- process logfiles and perform certain actions
+.SH SYNOPSIS
+.B logsurfer
+[
+.B \-c configfile
+] [
+.B \-d dumpfile
+] [
+.B \-f
+] [
+.B \-F
+] [
+.B \-l start_linenum
+] [
+.B \-p pidfile
+] [
+.B \-r start_regex
+] [
+.B \-s
+] [
+.B \-t
+] [
+.B \-e
+] [
+.B filename
+]
+.SH DESCRIPTION
+.LP
+\fILogsurfer\fP is a program that works on single textlines from a
+logfile (or from standard input). It compares each line against regular
+expressions of a set of "rules" and performs certain actions that are
+defined for this match.
+.LP
+The \fIlogsurfer\fP uses "rules" to define actions for messages (single
+lines). Messages may be collected in "contexts" which are stored in memory.
+Those contexts have their own default actions (e.g. for timeouts). At
+starttime you have to define a set of rules in the configuration file.
+While processing logmessages the logsurfer is able to dynamically add or
+delete rules, create or destroy contexts, invoke external programs for
+alerting people or to perform further automated actions etc.
+.LP
+A \f4rule\f1 starts with a set of regular expressions. The messageline
+that is being checked has to match against the first regular expression
+but must not
+match the second expression. The string "-" can be used as the second
+regex if you don't need this "match not" expression. If the messageline
+meets these requirements the associated action is taken. Currently the
+following actions are allowed: ignore this message, execute an external
+program, pass this messageline as standard input to an external program,
+create or delete a context, generate a "report" or dynamically add a new
+rule. In addition to these actions rules may have a configuration to
+delete themself if another message (again specified by two regular
+expressions) is being processed by the logsurfer or if an optional
+timeout has occured. Matching of messagelines against rules is usually done
+until the first match occurs. This can be circumvented by specifying a
+"continue" keyword in the rule. In this case the program will continue
+to search for another match in the rule definitions.
+.LP
+A \f4context\f1 is a set of messagelines that have been read by the
+logsurfer. Again the messagelines are specified by two regular expressions.
+Contexts can be used in "reports" to present a collection of messages
+associated with a specific action (e.g. all messagelines from one ftp
+session). Every context has a default action which is launched if either
+a specified timeout has occured or a configured limit (of linenumbers) has
+been reached. Default actions may be: ignore (drop) this context, execute
+an external program, feed all collected logmessages as standard input to
+an external program or generate a "report".
+.LP
+A \f4report\f1 summarizes a number of contexts and pipes the result
+into an external program.
+.LP
+The normal procedure for each logline is: Store this line in all matching
+contexts (as defined by their regular expressions), if the self-destroy
+regex matches, too, then the default action of the context is executed and the
+context is deleted, find the first matching rule and execute the given action
+(continue rule matching if the rule has the keyword "continue" --- see
+logsurfer.conf(4) manpage), check for the stop-pattern of the rule and in case
+of a match delete the rule, check for timeouts of rules and delete the
+affected rules, check for context timeouts and execute their default action.
+.LP
+Errors (like broken configuration statements or memory problems) are 
+reported on standard error. The \fIsyslog\fP mechanism is currently not
+being used because this might result in a loop if the logsurfer is processing
+those syslog-messages. It is suggested to start the logsurfer and redirect
+the output (incl. error output) to another file. If necessary you might
+want to start a second logsurfer that is watching the output of the first
+logsurfer.
+.LP
+If the program exits the following steps are executed:
+.TP 6
+1)
+The status of all active rules and contexts is dumped to the dumpfile.
+.TP
+2)
+If contexts have timeout values (other than 0) then a timeout is send to
+those functions. This will result in launching the default actions of the
+affected contexts.
+.TP
+3)
+Rules and contexts are deleted from memory (cleanup). This is only important
+for debugging purposes and should have no effect.
+.TP
+4)
+If there are still external programs running the logsurfer will wait up to
+20 seconds to catch them.
+.TP
+5)
+The logsurfer exits with a return value of zero (0).
+.LP
+.LP
+.SH OPTIONS
+.TP
+.B \-c configfile
+Specify another configuration file for the logsurfer. The default is
+"@CONFFILE@".
+.TP
+.B \-d dumpfile
+Specify another dumpfile for the logsurfer. The logsurfer writes the internal
+information about rules and contexts to this file if the program exists or a
+special signal was sent to the process (see NOTES). The default is
+"@DUMPFILE@".
+.TP
+.B \-D
+Daemonize. Fork and run the logsurfer process in the background.
+Any output sent to stdin, stdout and stderr are redirected to the
+bitbucket.
+.TP
+.B \-f
+Normally the logsurfer will process the input once and exit at the end
+(after processing all the input lines). By using the "-f" option the
+program will enter a special "follow" mode if the end of file has been
+reached. In this case the program will sleep for one second before trying
+to read a new line. If a new line has been added to the end of the input,
+then this line is processed. Otherwise the program will sleep again for
+one second. This mode is similar to the "-f" option of the tail(1)
+command.
+.TP
+.B \-F
+Acts like the "-f" option, but follows the logfile across rotations by
+checking if the inode of the file has changed and re-opening the log.
+.TP
+.B \-l start_linenum
+Start logfile processing at the given linenumber.
+.TP
+.B \-p pidfile
+Write the processid of the logsurfer process to the given filename. This
+can be used to simplify sending signals to the logsurfer program (for
+example after shifting logfiles).
+.TP
+.B \-r start_regex
+Start logfile processing with the first line that matches the given regular
+expression.
+.TP
+.B \-s
+Normally the logsurfer prints some information to stderr if the
+program exists. If you specify the "-s" (silent) option, then those
+messages are not printed.
+.TP
+.B \-t
+When logsurfer exits, the -t option will instruct it to explicitly expire
+all contexts which have either a relative or absolute timeout configured.
+Without the -t option, contexts will not be timed-out and will be removed
+silently without triggering their actions.
+.TP
+.B \-e
+When Logsurfer starts reading the log file this option will instruct it to
+seek to the end of the file before scanning starts. Without this option,
+Logsurfer will start scanning at the beginning of the file.
+.SH "FILES"
+.PD 0
+.TP 32
+.B @CONFFILE@
+default configuration file
+.TP
+.B @DUMPFILE@
+dump of the rules and contexts
+.PD
+.SH "SEE ALSO"
+.BR logsurfer.conf(4),
+.BR swatch(8)
+.SH NOTES
+This program may consume a lot of memory. Resource control should be
+done by the operating system (for example by setting limits). The program
+was designed to fall back to a defined state if some resources are not
+available.
+.LP
+Please do not run the logsurfer with a privileged userid (like root). You
+usually do not need the extra privileges. If your logfiles are not
+world-readable change them to be group readable and start the logsurfer
+with a non-privileged account that is a member of that group. Keep in
+mind, that the logsurfer might execute external programs (depending on
+your configuration file) which are not designed to run with higher
+privileges. The logsurfer program will print a warning message if it's
+started with root privilege (this feature can be disabled at compile time).
+.LP
+Be careful with external programs. The logsurfer is able to process any
+input (for example arbitrary long lines) but some other programs may
+crash or produce other inpredictable results if feeded with long lines.
+.LP
+The following signals have the specified effect when sent to the logsurfer
+program using the
+.BR kill(1)
+command.
+.TP 10
+.SM SIGHUP
+Reopens the logfile (to be analyzed). Processing starts with the first line
+in this file. This can be used after "shifting" logfiles and creating new
+logfiles.
+.TP
+.SM SIGUSR1
+Dump the internal state of all active rules and the collected contexts to
+the dumpfile "@DUMPFILE@".
+.TP
+.SM SIGTERM
+Dumps the state to the dumpfile (see above) and exits.
+.SH BUGS
+Quoting of regular expressions isn't that easy. If you use variables
+($0 - $9) in dynamic rules, then you have to keep in mind, that certain
+characters (matching your regular expresion for that variable) may
+again contain special chars, that are interpreted as regex-parts.
+Example: If you use one regular expresion to match a hostname and you
+are using this again as part of a regular expression, then the dots
+"." separating parts of the domainname will match any char (not only
+the dot).
+.LP
+If the logsurfer has been compiled with the "sendmail flush hack" and the
+logsurfer exists, then there might still be some mails in the local
+sendmail queue (not flushed). Delivery of such mail maybe delayed until
+the next time sendmail flushes the queue.
+

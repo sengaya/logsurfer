@@ -1,0 +1,167 @@
+Logsurfer
+=========
+
+This is Logsurfer - the real-time log monitoring and alerting tool.
+
+Many enhancing features have been added to this version of Logsurfer,
+refer to the ChangeLog file in this release for details.
+
+Refer to Logsurfer page at:
+	  http://www.crypt.gen.nz/logsurfer
+
+
+General Comments:
+=================
+
+To provide one simple and generic interface to regular expressions it
+was necessary to use a portable regex-library. Logsurfer uses the GNU
+regex library (version 0.12). To simplify installation and to use one
+"configure" command for the complete package the regex.[ch] files were
+integrated in the logsurfer source directory. For more information
+read the README file in the regex directory.
+
+The software was compiled and tested using the GNU-C-Compiler, but
+others should work without any problems.
+
+Logsurfer is often used to process / analyze system logs, which is a
+good idea (and is, incidentally, one of the design goals). For this
+purpose it is not necessary to run the software with "root"
+privileges. When using the software it is important to remember that,
+depending on the sites logsurfer configuration, external programs may
+be started and react to input derived from the processed log files. As
+the log files can be influenced by remote users (the very nature of the
+logging process causes events to be recorded which may be external to
+the computer concerned) the system admin should keep in mind that some
+specific configurations may, therefore, represent a higher than
+acceptable level of risk since, while logsurfer itself was written
+with security in mind, programs started via the configuration most
+probably were not. Programs should only be started when absolutely
+necessary and only then, when the associated risks have been
+considered.  The only privileges needed to be granted to logsurfer are
+those necessary to read the input file. If the log files are not world
+readable, it is probably best to create a new group and make the log
+files readable by that group.  Logsurfer can then be started with a
+userid, that is a member of the group.
+
+In order to reduce the risks associated with the above mentioned
+problems, logsurfer prints a warning message if started as root. If
+you really know what your doing, this behavior can be suppressed by
+removing the "-DWARN_ROOT" flag from the "CPPFLAGS" definition in the
+Makefile. 
+ 
+
+There is one really ugly hack for sendmail included in the code. If
+sendmail is used to post a message or report to one or more e-mail
+addresses, problems may occur when an unusual amount of activity
+causes a many instances of sendmail. This may result in memory
+exhaustion and inordinately long message delivery times. It is
+therefore strongly recommended to invoke sendmail in "queue-only"
+mode, which takes the messages and places them in the queue directory
+for later delivery: see "sendmail -odq". This configuration results in
+a relatively short runtime for the sendmail process and a cure for the
+multiple sendmail instance problem.  The drawback is, of course, that 
+important mail-messages may be delayed until the mail queue is flushed
+(see "sendmail -q<value>", where value is the time between queue
+flushes). If logsurfer is compiled with the define SENDMAIL_FLUSH
+(i.e. -DSENDMAIL_FLUSH in the CFLAGS definition in the src/Makefile),
+logsurfer will flush the mail queue if:
+- external programs were executed
+- no execution of external programs has occurred for 30 seconds (this
+  is effected by executing "/usr/lib/sendmail -q" - see src/exec.c)
+
+Compiling:
+==========
+
+Compilation should be very easy:
+  % ./configure
+
+If the location for the "logsurfer.conf" file is to be changed from
+its default in /usr/local/etc then use the --with-etcdir parameter to
+configure, e.g.:
+  % ./configure --with-etcdir=/your/etc/dir
+
+"Makefile" and "config.h" should be checked and, if need be, tweaked
+manually, before the compile. The compilation can be effected with:
+  % make
+
+This should build one program called "logsurfer", which, with its
+associated man pages, can be copied to its final destination with:
+  % make install
+
+
+Configuration:
+==============
+
+This is the difficult part...
+The configuration file syntax and some hints can be found in the
+manpage for "logsurfer.conf".  It is strongly suggested, that
+logsurfer be configured progressively, i.e. starting with a small
+configuration which functions and adding (or changing) rules
+progressively, testing after each step, until the goal is reached.
+One possible approach is to define rules to ignore log file messages,
+which have known causes and consequences, and add a last rule
+(i.e. the system default) which causes all other log messages to be
+mailed to the person (or persons) responsible. such a default rule may
+look something like:
+    ".*" - - - 0 pipe "/usr/lib/sendmail -odq logsurfer"
+
+This rule sends the message line to the email-address "logsurfer"
+(which is probably an alias pointing to the maintainer) if none of the
+other rules above it match. The maintainer can then decide on the
+correct reaction to the message, which may simply to add another
+ignore rule to the configuration file for the message (class).
+
+Any changes to the configuration file will only take effect AFTER
+logsurfer has been stopped and restarted. More information can be
+found in the man pages.
+
+A number of configuration examples can also be found at
+  	http://www.crypt.gen.nz/logsurfer/#configs
+
+Tools:
+======
+
+A number of small support programs can be found in the "contrib"
+directory, which may be useful with logsurfer.
+
+Tested:
+=======
+
+The package has only been thoroughly tested in the Solaris 2.5
+environment. It has been successfully compiled on a number of other
+systems, but has not been tested in great depth. Should problems
+occur, please inform the DFN-CERT.
+
+Acknowledgments:
+=================
+
+Thanks to
+- The authors of logsurfer (Wolfgang Ley and Uwe Ellerman) for
+  designing and implementing the software
+- Klaus-Peter Kossakowski and Stefan Kelm (all DFN-CERT) for their help
+  during development and planning
+- Wietse Venema (wietse@wzv.win.tue.nl) for the template of the
+  disclaimer file
+- The various authors of the regular expression library.
+- Jan Krueger (zzhikrue@rrzn-user.uni-hannover.de) for finding the most
+  serious bug ("-f" not working on all systems) and some other
+  suggestions like pidfile or non-ansi prototypes
+- Assar (assar@pdc.kth.se) for the special information on AIX and for
+  hints on building the package in a separate directory from the source.
+- Niko Makila (Niko.Makila@csc.fi) for the ---with-etcdir improvement of
+  the configure script
+- David Kibilka (d.kibilka@fz-juelich.de) for testing the context
+  linelimit patch
+- Gregor Kopf of Recurity Labs GmbH and Jan Kohlrausch of DFN-CERT for
+  highlighting a double free() bug
+- Mike Santos for patches to implement -D and -F
+
+Feedback:
+=========
+
+Please let us know if and what kind of problems occur when using the
+logsurfer package. It will help us fix the problems and help others
+avoid replicating them. Please send all bug reports and feedback to:
+
+	logsurfer@crypt.gen.nz
+

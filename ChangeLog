@@ -1,0 +1,126 @@
+Version 1.8 (logsurfer)
+	Kerry Thompson kerry@crypt.gen.nz:
+	+ fixed double free() in exec.c/prepare_exec(), thanks to reports
+	  from Gregor Kopf of Recurity Labs and Jan Kohlrausch of DFN_CERT
+	+ centralised version number in Makefile.in, added -DVERSION=...
+	+ updated README & DISCLAIMER files removing DFN-CERT copyright
+	+ now just Logsurfer, not Logsurfer+ any more
+	+ -D command line option for daemon mode. Warning: closes stdin,
+	  stdout, & stderr, therefore no error messages
+	+ -F command line option to auto re-open log file
+	+ dropped the config-examples directory, added note in README
+	  to go to http://www.crypt.gen.nz/logsurfer/#configs
+
+Version 1.7 (logsurfer+)
+	Kerry Thompson kerry@crypt.gen.nz:
+	+ added -e option to begin processing from the current end
+	  of the input log file ( normally used with -f )
+	+ put double-quotes around regex expressions in dump file
+	+ if the context argument to a pipe or report action is "-"
+	  then the current context contents are piped into the command
+	  this should shorten most context definitions
+        + added new action "echo" which simply echo's the output on
+          stdout, or to a file with optional >file & >>file 1st arg
+	+ added a macro construct in context action fields, if "$lines"
+	  exists in a context action (such as a command line) it will
+	  be substituted by the number of lines in the context
+	+ added syslog action to send a message into syslog
+	  the first argument must be facility:level, the second arg
+	  is a string to send to syslog
+
+Version 1.6b (logsurfer+)
+	+ fixed -t option in getopts()
+
+Version 1.6a (logsurfer+)
+	Kerry Thompson kerry@crypt.gen.nz:
+	+ corrected off-by-one in min_lines checking
+	+ added min_lines context arg to logsurfer.conf man page
+
+Version 1.6 (logsurfer+)
+	Kerry Thompson kerry@crypt.gen.nz:
+	+ added an optional parameter at the end of context definition
+	  (just before action) specifying the minimum number of lines
+	  collected which needs to be satisfied before performing action
+	+ added -t option to explicity timeout contexts when exiting
+	  default=off so contexts don't all trigger when we shut down
+	+ only add lines to a context if the context has an action of
+	  'pipe' or 'report'. In other words, don't store lines in
+	  memory which won't ever be used. The number of matching
+	  lines in the context is still incremented. This allows contexts
+	  to be created which can notify if we _don't_ see an event, such
+	  as regular "syslog pings" from hosts.
+
+Version 1.5b
+	+ Corrected off-by-one heap overflow and uninitialized pointer
+
+Version 1.5a
+	+ Corrected minor bug in context timeouts
+
+Version 1.5
+	+ Added y2k disclaimer
+	+ Corrected authorship and copyright information
+	+ Released
+
+Version 1.5beta2
+	+ Patch for context linelimit added
+	+ Changed Logsurfer URL to http://www.cert.dfn.de/eng/logsurf/
+
+Version 1.5beta
+	+ Changed default dumpfile to /dev/null to avoid security problems.
+	  You can specify the default location for the logsurfer.dump file
+	  in the Makefile (see DEF_DUMPFILE). However - be aware that if using
+	  a public writable directory someone can crate a sym-link for that
+	  name and you'll write to another file. So I would suggest to use
+	  the "-d" option while starting logsurfer to specify a dumpfilename.
+	+ Added -DWARN_ROOT to print a warning if logsurfer is running as root.
+	+ Added generic GNU "INSTALL" file
+	+ Corrected version number in Makefile
+
+Version 1.41
+	+ deleted two #error defines which caused problems on non
+	  ansi-compilers
+
+Version 1.4
+	+ fixed serious bug: rule processing stopped if a match_regex was
+	  found (even if the not_match_regex dropped this rule)
+	+ setup www-page http://www.cert.dfn.de/eng/team/wl/logsurfer/
+
+Version 1.3
+	+ removed #error directive (this is only available on ansi
+	  compilers)
+	+ added output of logsurfer version number in the usage
+	  output
+
+Version 1.2
+	+ updated manpage of logsurfer.1 to include -f and the new
+	  -p option
+	+ added -p option to write pid to a file (for easier restarts)
+	+ changed line handling to be independent from line length
+	  (no fixed buffers for processing stuff)
+	+ added --with-etcdir option for configure to specify the
+	  default location of the logsurfer.conf file
+	+ new "contrib" directory to collect helpful tools (added a script
+	  "start-mail" and a tool "prtime" to start the collection)
+	+ added a check if "const" is defined or not
+	+ sendmail flushing has been improved (but is still not completly
+	  reliable - it is only implemented as an additional help for
+	  flushing the sendmail queue beside the time sendmail does it
+	  by itself)
+	+ -DSENDMAIL_FLUSH is now not longer default
+	+ LDFLAGS in Makefile.in corrected
+	+ trying to report linenumber on configuration errors
+	+ the behaviour or fgets() at EOF is not portable - now using read()
+	+ all header defines also for non ANSI C compilers available
+	+ added sys/resource.h include because AIX header files are broken
+	+ added srcdir and VPATH definition to Makefiles
+	+ changed all #include "../config.h" to #include <config.h>
+	+ added Makefile.in in man/ and src/ dir
+	+ added PostScript version of regex documentation to package
+	+ merged configure.in from the old regex dir to the new global one
+	+ removed regex-0.12 dir and included regex.c and regex.h in the
+	  logsurfer source dir
+
+Version 1.1
+	+ splited the code into several peaces
+	+ wrote a draft manual page
+
