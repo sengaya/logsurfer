@@ -2,8 +2,8 @@ Source: logsurfer
 Section: admin
 Priority: extra
 Maintainer: Thilo Uttendorfer <debian@uttendorfer.net>
-Build-Depends: debhelper (>= 7.4), autotools-dev
-Standards-Version: 3.9.3
+Build-Depends: debhelper (>= 7), autotools-dev
+Standards-Version: 3.8.4
 Homepage: http://www.crypt.gen.nz/logsurfer/
 
 Package: logsurfer
