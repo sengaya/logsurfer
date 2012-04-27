@@ -1,3 +1,9 @@
+logsurfer (1.8-1~ppa1~precise1) precise; urgency=low
+
+  * Build for Ubuntu 12.04
+
+ -- Thilo Uttendorfer <debian@uttendorfer.net>  Sat, 28 Apr 2012 01:51:50 +0200
+
 logsurfer (1.8-1) unstable; urgency=low
 
   * Initial release
