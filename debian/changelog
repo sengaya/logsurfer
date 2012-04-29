@@ -1,5 +1,5 @@
 logsurfer (1.8-1) unstable; urgency=low
 
-  * Initial release
+  * Initial release (Closes #670875)
 
  -- Thilo Uttendorfer <debian@uttendorfer.net>  Mon, 27 Feb 2012 00:42:02 +0100
