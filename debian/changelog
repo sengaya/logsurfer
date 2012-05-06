@@ -1,3 +1,10 @@
+logsurfer (1.8-2) unstable; urgency=low
+
+  * Added watch file
+  * Updated format version of copyright file
+
+ -- Thilo Uttendorfer <debian@uttendorfer.net>  Sun, 06 May 2012 14:18:13 +0200
+
 logsurfer (1.8-1) unstable; urgency=low
 
   * Initial release (Closes #670875)
