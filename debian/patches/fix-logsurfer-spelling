@@ -1,0 +1,22 @@
+Description: Fixed logsurfer spelling
+Author: Thilo Uttendorfer <debian@uttendorfer.net>
+Last-Update: 2012-06-01
+Index: logsurfer/src/exit.c
+===================================================================
+--- logsurfer.orig/src/exit.c	2012-03-11 19:21:14.814993657 +0100
++++ logsurfer/src/exit.c	2012-06-01 13:49:41.869076131 +0200
+@@ -344,12 +344,12 @@
+ 		(void) fprintf(stderr, "cleaning up memory...\n");
+ 	cleanup_memory();
+ 
+-	/* wait for childs */
++	/* wait for children */
+ 	child_retry=0;
+ 	while ( (waitpid((pid_t) -1, NULL, WNOHANG) >= 0) && (child_retry < 4) ) {
+ 		if (!exit_silent)
+ 			(void) fprintf(stderr,
+-				"waiting for childs (retry #%d)...\n", ++child_retry);
++				"waiting for children (retry #%d)...\n", ++child_retry);
+ 		(void) sleep(5);
+ 		while (waitpid((pid_t) -1, NULL, WNOHANG) > 0)
+ 			;

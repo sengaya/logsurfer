@@ -1,0 +1,19 @@
+Description: Fix spelling errors
+Author: Thilo Uttendorfer <debian@uttendorfer.net>
+Last-Update: 2012-06-01
+Index: logsurfer/man/logsurfer.1.in
+===================================================================
+--- logsurfer.orig/man/logsurfer.1.in	2012-06-01 13:40:19.364138139 +0200
++++ logsurfer/man/logsurfer.1.in	2012-06-01 13:41:49.799010928 +0200
+@@ -222,9 +222,9 @@
+ .SH BUGS
+ Quoting of regular expressions isn't that easy. If you use variables
+ ($0 - $9) in dynamic rules, then you have to keep in mind, that certain
+-characters (matching your regular expresion for that variable) may
++characters (matching your regular expression for that variable) may
+ again contain special chars, that are interpreted as regex-parts.
+-Example: If you use one regular expresion to match a hostname and you
++Example: If you use one regular expression to match a hostname and you
+ are using this again as part of a regular expression, then the dots
+ "." separating parts of the domainname will match any char (not only
+ the dot).

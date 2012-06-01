@@ -1,0 +1,57 @@
+Description: Fix hyphons in man pages
+Author: Thilo Uttendorfer <debian@uttendorfer.net>
+Last-Update: 2012-06-01
+Index: logsurfer/man/logsurfer.1.in
+===================================================================
+--- logsurfer.orig/man/logsurfer.1.in	2012-06-01 13:34:46.429998588 +0200
++++ logsurfer/man/logsurfer.1.in	2012-06-01 13:38:07.833787237 +0200
+@@ -133,16 +133,16 @@
+ .TP
+ .B \-f
+ Normally the logsurfer will process the input once and exit at the end
+-(after processing all the input lines). By using the "-f" option the
++(after processing all the input lines). By using the "\-f" option the
+ program will enter a special "follow" mode if the end of file has been
+ reached. In this case the program will sleep for one second before trying
+ to read a new line. If a new line has been added to the end of the input,
+ then this line is processed. Otherwise the program will sleep again for
+-one second. This mode is similar to the "-f" option of the tail(1)
++one second. This mode is similar to the "\-f" option of the tail(1)
+ command.
+ .TP
+ .B \-F
+-Acts like the "-f" option, but follows the logfile across rotations by
++Acts like the "\-f" option, but follows the logfile across rotations by
+ checking if the inode of the file has changed and re-opening the log.
+ .TP
+ .B \-l start_linenum
+@@ -159,13 +159,13 @@
+ .TP
+ .B \-s
+ Normally the logsurfer prints some information to stderr if the
+-program exists. If you specify the "-s" (silent) option, then those
++program exists. If you specify the "\-s" (silent) option, then those
+ messages are not printed.
+ .TP
+ .B \-t
+-When logsurfer exits, the -t option will instruct it to explicitly expire
++When logsurfer exits, the \-t option will instruct it to explicitly expire
+ all contexts which have either a relative or absolute timeout configured.
+-Without the -t option, contexts will not be timed-out and will be removed
++Without the \-t option, contexts will not be timed-out and will be removed
+ silently without triggering their actions.
+ .TP
+ .B \-e
+Index: logsurfer/man/logsurfer.conf.4.in
+===================================================================
+--- logsurfer.orig/man/logsurfer.conf.4.in	2012-06-01 13:34:46.429998588 +0200
++++ logsurfer/man/logsurfer.conf.4.in	2012-06-01 13:38:58.025179432 +0200
+@@ -297,7 +297,7 @@
+ the external command "/bin/echo" with the complete message line as an
+ argument. The result will be, that every input line is echoed to the
+ standard output. If you put the example line in a file called "testconf"
+-then you might want to use "logsurfer -c testconf" to start the logsurfer
++then you might want to use "logsurfer \-c testconf" to start the logsurfer
+ program with this configuration file. Every line you type in should be
+ echoed.
+ .LP
