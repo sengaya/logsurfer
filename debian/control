@@ -9,6 +9,10 @@ Homepage: http://www.crypt.gen.nz/logsurfer/
 Package: logsurfer
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Monitoring system logs in real-time
- Logsurfer is a program for monitoring system logs in real-time, and reporting
- on the occurrence of events.
+Description: logsurfer is a real-time system log file analyzer
+ Logsurfer is a program for monitoring system log files in real-time, and
+ reporting on the occurrence of events.
+ .
+ In contrary to other log file analyzer (e.g. logcheck) it is possible to group
+ related log entries together or initiate actions other than emailing
+ suspicious entries.
