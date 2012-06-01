@@ -1,0 +1,48 @@
+Index: logsurfer/man/Makefile.in
+===================================================================
+--- logsurfer.orig/man/Makefile.in	2012-06-01 00:02:20.729895248 +0200
++++ logsurfer/man/Makefile.in	2012-06-01 00:08:14.957420433 +0200
+@@ -18,7 +18,7 @@
+ 
+ install:
+ 	$(INSTALL_DATA) logsurfer.1 $(mandir)/man1/logsurfer.1
+-	$(INSTALL_DATA) logsurfer.conf.4 $(mandir)/man4/logsurfer.conf.4
++	$(INSTALL_DATA) logsurfer.conf.4 $(mandir)/man5/logsurfer.conf.5
+ 
+ clean:
+ 	$(RM) logsurfer.1 logsurfer.conf.4
+Index: logsurfer/man/logsurfer.1.in
+===================================================================
+--- logsurfer.orig/man/logsurfer.1.in	2012-06-01 00:02:20.729895248 +0200
++++ logsurfer/man/logsurfer.1.in	2012-06-01 00:09:15.120643566 +0200
+@@ -80,7 +80,7 @@
+ regex matches, too, then the default action of the context is executed and the
+ context is deleted, find the first matching rule and execute the given action
+ (continue rule matching if the rule has the keyword "continue" --- see
+-logsurfer.conf(4) manpage), check for the stop-pattern of the rule and in case
++logsurfer.conf(5) manpage), check for the stop-pattern of the rule and in case
+ of a match delete the rule, check for timeouts of rules and delete the
+ affected rules, check for context timeouts and execute their default action.
+ .LP
+@@ -182,7 +182,7 @@
+ dump of the rules and contexts
+ .PD
+ .SH "SEE ALSO"
+-.BR logsurfer.conf(4),
++.BR logsurfer.conf(5),
+ .BR swatch(8)
+ .SH NOTES
+ This program may consume a lot of memory. Resource control should be
+Index: logsurfer/man/logsurfer.conf.4.in
+===================================================================
+--- logsurfer.orig/man/logsurfer.conf.4.in	2012-06-01 00:02:20.729895248 +0200
++++ logsurfer/man/logsurfer.conf.4.in	2012-06-01 00:08:51.628980672 +0200
+@@ -2,7 +2,7 @@
+ .\" written by W. Ley, U. Ellermann, and K. Thompson
+ .\"
+ .\" @(#) $Header: logsurfer.1,v 
+-.TH LOGSURFER 4  "Thu Oct 19 1995"
++.TH LOGSURFER 5  "Thu Oct 19 1995"
+ .SH NAME
+ logsurfer.conf \- configuration file for logsurfer
+ .SH SYNOPSIS
