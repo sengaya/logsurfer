@@ -1,22 +1,8 @@
-logsurfer (1.8-3) UNRELEASED; urgency=low
+logsurfer (1.8-1) unstable; urgency=low
 
-  * Updated description
-  * Updated debian compatibility level to 9
+  * Initial release (Closes: #670875)
   * Changed section of logsurfer.conf man page to section 5
   * Fixed man pages (hyphons, spelling)
   * Fixed spelling in logsurfer
-
- -- Thilo Uttendorfer <debian@uttendorfer.net>  Fri, 01 Jun 2012 12:46:01 +0200
-
-logsurfer (1.8-2) unstable; urgency=low
-
-  * Added watch file
-  * Updated format version of copyright file
-
- -- Thilo Uttendorfer <debian@uttendorfer.net>  Sun, 06 May 2012 14:18:13 +0200
-
-logsurfer (1.8-1) unstable; urgency=low
-
-  * Initial release (Closes #670875)
 
  -- Thilo Uttendorfer <debian@uttendorfer.net>  Mon, 27 Feb 2012 00:42:02 +0100
