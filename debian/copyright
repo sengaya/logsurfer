@@ -1,5 +1,6 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: logsurfer
+Upstream-Contact: Kerry Thompson <kerry@crypt.gen.nz>
 Source: http://www.crypt.gen.nz/logsurfer/
 
 Files: *
@@ -20,10 +21,48 @@ License: BSD-style
  * merchantability and fitness for any particular purpose.
  ************************************************************************/
 
+Files: src/regex.*
+Copyright: Copyright (C) 1985, 1989-1993 Free Software Foundation, Inc.
+License: GPL-2+
+
+Files: regex/regex.ps
+Copyright: Copyright (C) 1992 Free Software Foundation.
+License: GPL
+ Permission is granted to make and distribute verbatim copies of this manual
+ provided the copyright notice and this permission notice are preserved on all
+ copies.
+ .
+ Permission is granted to copy and distribute modified versions of this manual
+ under the conditions for verbatim copying, provided also that the section
+ entitled ``GNU General Public License'' is included exactly as in the original,
+ and provided that the entire resulting derived work is distributed under the
+ terms of a permission notice identical to this one.
+ .
+ Permission is granted to copy and distribute translations of this manual into
+ another language, under the above conditions for modified versions, except that
+ the section entitled ``GNU General Public License'' may be included in a
+ translation approved by the Free Software Foundation instead of in the original
+ English.
+
 Files: debian/*
 Copyright: 2012 Thilo Uttendorfer <debian@uttendorfer.net>
 License: GPL-2+
- This package is free software; you can redistribute it and/or modify
+
+Files: debian/patches/*
+Copyright: 2012 Thilo Uttendorfer <debian@uttendorfer.net>
+License: BSD-style
+ /************************************************************************
+ * Redistribution and use in source and binary forms are permitted
+ * provided that this entire copyright notice is duplicated in all such
+ * copies.
+ *
+ * This software is provided "as is" and without any expressed or implied
+ * warranties, including, without limitation, the implied warranties of
+ * merchantability and fitness for any particular purpose.
+ ************************************************************************/
+
+License: GPL-2+
+ This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2 of the License, or
  (at your option) any later version.
@@ -38,4 +77,3 @@ License: GPL-2+
  .
  On Debian systems, the complete text of the GNU General
  Public License version 2 can be found in "/usr/share/common-licenses/GPL-2".
-
