@@ -1,0 +1,13 @@
+Index: logsurfer/Makefile.in
+===================================================================
+--- logsurfer.orig/Makefile.in	2012-03-11 19:21:14.810993655 +0100
++++ logsurfer/Makefile.in	2012-10-02 23:28:42.146133268 +0200
+@@ -22,7 +22,7 @@
+ #    to use the ugly sendmail hack (see README)
+ #   -DWARN_ROOT
+ #    print a warning if the program is started as root (see README)
+-CPPFLAGS = -DVERSION=\"$(version)\" -DWARN_ROOT
++CPPFLAGS = -DVERSION=\"$(version)\" -DWARN_ROOT @CPPFLAGS@
+ 
+ # Which C-Compiler?
+ CC = @CC@
