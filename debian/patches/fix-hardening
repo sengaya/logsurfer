@@ -1,3 +1,6 @@
+Description: Fix hardening
+Author: Thilo Uttendorfer <debian@uttendorfer.net>
+Last-Update: 2012-10-03
 Index: logsurfer/Makefile.in
 ===================================================================
 --- logsurfer.orig/Makefile.in	2012-03-11 19:21:14.810993655 +0100
