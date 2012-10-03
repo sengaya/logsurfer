@@ -1,0 +1,15 @@
+Running logsurfer on Debian systems
+
+The default location of the logsurfer configuration file is /etc/logsurfer.conf.
+
+
+Setting up logsurfer with "follow" mode
+With the "-f" or "-F" option, logsurfer will act like the "tail -f" command.
+This is especially useful if you want to do real-time monitoring of log files.
+To start logsurfer on system boot you can either create an init.d script or use
+/etc/rc.local.
+
+Setting up logsurfer with cron
+Another way to run logsurfer is to use cron. While you won't have real-time
+monitoring, it could be appropriate in some cases. Remember that logsurfer will
+scan the whole file on each run.
